@@ -73,7 +73,7 @@ async def analyze(request):
     img = open_image(BytesIO(img_bytes))
     prediction = learn.predict(img)
     probs_list = prediction[2].numpy()
-    return JSONResponse(
+    return JSONResponse({
         'category': classes[prediction[1].item()],
         'probs': {c: round(float(probs_list[i]), 5) for (i, c) in enumerate(classes)}
     })
