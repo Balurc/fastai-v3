@@ -78,14 +78,37 @@ async def homepage(request):
 #         'probs': {c: round(float(probs_list[i]), 5) for (i, c) in enumerate(classes)}
 #     })
 
-
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
     img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)
-    return JSONResponse({'result': str(prediction)})
+    
+    pred_1_class, indice, preds = learn.predict(img)
+    preds_sorted, idxs = preds.sort(descending=True)
+    
+    pred_2_class = learn.data.classes[idxs[1]]
+    pred_3_class = learn.data.classes[idxs[2]]
+    pred_4_class = learn.data.classes[idxs[3]]
+    pred_5_class = learn.data.classes[idxs[4]]
+    
+    # Get best 3 predictions - probabilities
+    pred_1_prob = np.round(100*preds_sorted[0].item(),2)
+    pred_2_prob = np.round(100*preds_sorted[1].item(),2)
+    pred_3_prob = np.round(100*preds_sorted[2].item(),2)
+    preds_best3 = [f'{pred_1_class} ({pred_1_prob}%)', f'{pred_2_class} ({pred_2_prob}%)', f'{pred_3_class} ({pred_3_prob}%)']
+    
+    return JSONResponse({'result': str(preds_best3)})
+
+
+
+# @app.route('/analyze', methods=['POST'])
+# async def analyze(request):
+#     img_data = await request.form()
+#     img_bytes = await (img_data['file'].read())
+#     img = open_image(BytesIO(img_bytes))
+#     prediction = learn.predict(img)[0]
+#     return JSONResponse({'result': str(prediction)})
 
 
 if __name__ == '__main__':
