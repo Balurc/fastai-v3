@@ -8,7 +8,7 @@ from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
-from flask import Flask, request, jsonify
+# from flask import Flask, request, jsonify
 
 export_file_url = 'https://drive.google.com/uc?export=download&id=1o3wmeFwBXp88ZBtfUYK8nAyVOAWqDF5c'
 export_file_name = 'resnet50(91).pkl'
@@ -66,17 +66,26 @@ async def homepage(request):
 #     }
 
 
+# @app.route('/analyze', methods=['POST'])
+# async def analyze(request):
+#     img_data = await request.form()
+#     img_bytes = await (img_data['file'].read())
+#     img = open_image(BytesIO(img_bytes))
+#     prediction = learn.predict(img)
+#     probs_list = prediction[2].numpy()
+#     return JSONResponse({
+#         'category': classes[prediction[1].item()],
+#         'probs': {c: round(float(probs_list[i]), 5) for (i, c) in enumerate(classes)}
+#     })
+
+
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
     img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)
-    probs_list = prediction[2].numpy()
-    return JSONResponse({
-        'category': classes[prediction[1].item()],
-        'probs': {c: round(float(probs_list[i]), 5) for (i, c) in enumerate(classes)}
-    })
+    prediction = learn.predict(img)[0]
+    return JSONResponse({'result': str(prediction)})
 
 
 if __name__ == '__main__':
