@@ -54,14 +54,38 @@ async def homepage(request):
     html_file = path / 'view' / 'index.html'
     return HTMLResponse(html_file.open().read())
 
+# def predict_single(img_file):
+#     'function to take image and return prediction'
+#     prediction = learn.predict(open_image(img_file))
+#     probs_list = prediction[2].numpy()
+#     return {
+#         'category': classes[prediction[1].item()],
+#         'probs': {c: round(float(probs_list[i]), 5) for (i, c) in enumerate(classes)}
+#     }
 
 @app.route('/analyze', methods=['POST'])
 async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
     img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)[0]
-    return JSONResponse({'result': str(prediction)})
+    prediction = learn.predict(img)
+    probs_list = prediction[2].numpy()
+    return JSONResponse({
+        'category': classes[prediction[1].item()],
+        'probs': {c: round(float(probs_list[i]), 5) for (i, c) in enumerate(classes)}
+    })
+#     return JSONResponse({'result': str(prediction)})
+
+
+# @app.route('/analyze', methods=['POST'])
+# async def analyze(request):
+#     img_data = await request.form()
+#     img_bytes = await (img_data['file'].read())
+#     img = open_image(BytesIO(img_bytes))
+#     prediction = learn.predict(img)[0]
+#     return JSONResponse({'result': str(prediction)})
+
+
 
 
 if __name__ == '__main__':
