@@ -8,7 +8,7 @@ from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
-from flask import Flask, request, jsonify
+# from flask import Flask, request, jsonify
 
 export_file_url = 'https://drive.google.com/uc?export=download&id=1o3wmeFwBXp88ZBtfUYK8nAyVOAWqDF5c'
 export_file_name = 'resnet50(91).pkl'
